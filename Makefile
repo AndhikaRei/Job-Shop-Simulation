@@ -7,6 +7,7 @@ clean:
 	rm jobshop.o
 	rm simlib.o
 	rm jobshop
+	rm jobshop.out
 
 jobshop.o: jobshop.c
 	gcc -c jobshop.c -o jobshop.o -I.
