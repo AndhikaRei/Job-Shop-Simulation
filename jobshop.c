@@ -121,9 +121,9 @@ void arrive (int new_job, int arrival_jopshop_number) {
 		// timest ((double) num_machines_busy[station], station);
 
 		sampst (0.0, station_queue);	/* For station. */
-		sampst (0.0, num_stations + job_type);	/* For job type. */
-		timest ((double) num_machines_busy[arrival_jopshop_number][station], station_queue);
+		sampst (0.0, 3 * num_stations + job_type);	/* For job type. */
 		++num_machines_busy[arrival_jopshop_number][station];
+		timest ((double) num_machines_busy[arrival_jopshop_number][station], station_queue);
 
 		/* Schedule a service completion.  Note defining attributes beyond the
 			first two for the event record before invoking event_schedule. */
@@ -169,7 +169,7 @@ void depart (int departure_jobshop_number) {
 		/* Tally this same delay for this job type. */
 		job_type_queue = transfer[2];
 		task_queue = transfer[3];
-		sampst (sim_time - transfer[1], num_stations + job_type_queue);
+		sampst (sim_time - transfer[1], 3 * num_stations + job_type_queue);
 
 		/* Schedule end of service for this job at this station.  Note defining attributes beyond 
 				the first two for the event record before invoking event_schedule. */
@@ -204,31 +204,37 @@ void depart (int departure_jobshop_number) {
 
 void report (void) {
 	// TODO: Implement this.
-	// /* Report generator function. */
-	// int i;
-	// double overall_avg_job_tot_delay, avg_job_tot_delay, sum_probs;
+	/* Report generator function. */
+	
+	int station_queue;
+	double overall_avg_job_tot_delay, avg_job_tot_delay, sum_probs;
 
-	// /* Compute the average total delay in queue for each job type and the overall average job total 
-	// 	 delay. */
-	// fprintf (outfile, "\n\n\n\nJob type     Average total delay in queue");
-	// overall_avg_job_tot_delay = 0.0;
-	// sum_probs = 0.0;
-	// for (i = 1; i <= num_job_types; ++i) {
-	// 	avg_job_tot_delay = sampst (0.0, -(num_stations + i)) * num_tasks[i];
-	// 	fprintf (outfile, "\n\n%4d%27.3f", i, avg_job_tot_delay);
-	// 	overall_avg_job_tot_delay += (prob_distrib_job_type[i] - sum_probs) * avg_job_tot_delay;
-	// 	sum_probs = prob_distrib_job_type[i];
-	// }
-	// fprintf (outfile, "\n\nOverall average job total delay =%10.3f\n", overall_avg_job_tot_delay);
+	/* Compute the average total delay in queue for each job type and the overall average job total 
+		delay. */
+	fprintf (outfile, "\n\n\nJob type     Average total delay in queue");
+	overall_avg_job_tot_delay = 0.0;
+	sum_probs = 0.0;
+	for (i = 1; i <= num_job_types; ++i) {
+		avg_job_tot_delay = sampst (0.0, -(3 * num_stations + i)) * num_tasks[i];
+		fprintf (outfile, "\n\n%4d%27.3f", i, avg_job_tot_delay);
+		overall_avg_job_tot_delay += (prob_distrib_job_type[i] - sum_probs) * avg_job_tot_delay;
+		sum_probs = prob_distrib_job_type[i];
+	}
 
-	// /* Compute the average number in queue, the average utilization, and the
-	// 	 average delay in queue for each station. */
-	// fprintf (outfile, "\n\n\n Work      Average number      Average       Average delay");
-	// fprintf (outfile, "\nstation       in queue       utilization        in queue");
-	// for (j = 1; j <= num_stations; ++j) {
-	// 	fprintf (outfile, "\n\n%4d%17.3f%17.3f%17.3f", j, filest (j), 
-	// 		timest (0.0, -j) / num_machines[j], sampst (0.0, -j));
-	// }
+	fprintf (outfile, "\n\nOverall average job total delay =%10.3f", overall_avg_job_tot_delay);
+
+	for (i = 1; i <= 3; ++i) {
+		/* Compute the average number in queue, the average utilization, and the
+			average delay in queue for each station for each jobshop. */
+		fprintf (outfile, "\n\n\nStatistics for jobshop %d", i);
+		fprintf (outfile, "\n Work      Average number      Average       Average delay");
+		fprintf (outfile, "\nstation       in queue       utilization        in queue");
+		for (j = 1; j <= num_stations; ++j) {
+			station_queue = getListQueue(i, j);
+			fprintf (outfile, "\n\n%4d%17.3f%17.3f%17.3f", j, filest (station_queue), 
+				timest (0.0, -station_queue) / num_machines[j], sampst (0.0, -station_queue));
+		}
+	}
 		
 }
 
