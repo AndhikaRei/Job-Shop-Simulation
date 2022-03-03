@@ -4,7 +4,7 @@
 
 #define MAX_LIST    25		/* Max number of lists. */
 #define MAX_ATTR    10		/* Max number of attributes. */
-#define MAX_SVAR    25		/* Max number of sampst variables. */
+#define MAX_SVAR    30		/* Max number of sampst variables. */
 #define TIM_VAR     25		/* Max number of timest variables. */
 #define MAX_TVAR    50		/* Max number of timest variables + lists. */
 #define EPSILON      0.001	/* Used in event_cancel. */
@@ -13,7 +13,7 @@
 
 #define LIST_SIZE   26		/* MAX_LIST + 1. */
 #define ATTR_SIZE   11		/* MAX_ATTR + 1. */
-#define SVAR_SIZE   26		/* MAX_SVAR + 1. */
+#define SVAR_SIZE   31		/* MAX_SVAR + 1. */
 #define TVAR_SIZE   51		/* MAX_TVAR + 1. */
 
 /* Define options for list_file and list_remove. */
